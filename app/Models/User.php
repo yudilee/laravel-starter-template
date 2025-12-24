@@ -30,6 +30,10 @@ class User extends Authenticatable
         'customer_preferences',
         'role',
         'auth_source',
+        'two_factor_enabled',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
     ];
 
     /**
@@ -56,6 +60,8 @@ class User extends Authenticatable
             'towing_preferences' => 'array',
             'vehicle_preferences' => 'array',
             'customer_preferences' => 'array',
+            'two_factor_enabled' => 'boolean',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 

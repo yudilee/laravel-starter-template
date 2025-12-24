@@ -19,6 +19,10 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('login', fn() => view('auth.login'))->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    
+    // 2FA Challenge (during login)
+    Route::get('2fa/challenge', [\App\Http\Controllers\TwoFactorController::class, 'challenge'])->name('2fa.challenge')->withoutMiddleware('guest');
+    Route::post('2fa/verify', [\App\Http\Controllers\TwoFactorController::class, 'verify'])->name('2fa.verify')->withoutMiddleware('guest');
 });
 
 Route::middleware('auth')->group(function () {
@@ -35,6 +39,15 @@ Route::middleware('auth')->group(function () {
     // Push Subscriptions
     Route::post('push/subscribe', [NotificationController::class, 'subscribe'])->name('push.subscribe');
     Route::delete('push/unsubscribe', [NotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
+
+    // Two-Factor Authentication
+    Route::get('2fa', [\App\Http\Controllers\TwoFactorController::class, 'index'])->name('2fa.index');
+    Route::post('2fa/enable', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('2fa.enable');
+    Route::post('2fa/confirm', [\App\Http\Controllers\TwoFactorController::class, 'confirm'])->name('2fa.confirm');
+    Route::post('2fa/disable', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('2fa.disable');
+    Route::post('2fa/regenerate', [\App\Http\Controllers\TwoFactorController::class, 'regenerateCodes'])->name('2fa.regenerate');
+    Route::delete('sessions/{session}', [\App\Http\Controllers\TwoFactorController::class, 'terminateSession'])->name('sessions.terminate');
+    Route::post('sessions/other', [\App\Http\Controllers\TwoFactorController::class, 'terminateOtherSessions'])->name('sessions.terminate-others');
 
     // Admin routes (requires admin role)
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
