@@ -97,6 +97,23 @@ Default tasks (run `php artisan schedule:run`):
 - `audit:archive` - Archive old audit logs (daily 2am)
 - `sessions:cleanup` - Clean inactive sessions (daily 3am)
 
+## Role Permission System
+
+This template includes an ERPNext-style role permission system:
+- Create/edit custom roles
+- DocType-level permissions (read/write/create/delete)
+- Field-level permissions for granular control
+
+See [docs/ROLE_PERMISSIONS.md](docs/ROLE_PERMISSIONS.md) for details.
+
+## 🤖 AI-Assisted Development
+
+This repository was created with the assistance of **Antigravity AI** (Google DeepMind). 
+The AI helped with:
+- Architecture design and implementation
+- Code generation and best practices
+- Documentation and testing
+
 ## License
 
 MIT
