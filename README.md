@@ -99,12 +99,69 @@ Default tasks (run `php artisan schedule:run`):
 
 ## Role Permission System
 
-This template includes an ERPNext-style role permission system:
-- Create/edit custom roles
-- DocType-level permissions (read/write/create/delete)
-- Field-level permissions for granular control
+This template includes an ERPNext-style dynamic role permission system.
 
-See [docs/ROLE_PERMISSIONS.md](docs/ROLE_PERMISSIONS.md) for details.
+### Features
+- **Dynamic Roles** - Create/edit/delete custom roles
+- **DocType Permissions** - Read/Write/Create/Delete/Export per model
+- **Field Permissions** - Control which fields each role can edit
+- **Multiple Roles** - Users can have multiple roles (permissions combine)
+
+### Default Roles
+| Role | Description |
+|------|-------------|
+| Administrator | Full system access |
+| Manager | Full data access, limited admin |
+| Viewer | Read-only access |
+
+### Adding a New DocType
+
+When you add new features, register them in the permission system:
+
+**Step 1: Add to `app/Models/Role.php`:**
+```php
+public static function getDocTypes(): array
+{
+    return [
+        // ... existing ...
+        'NewFeature' => 'My New Feature',
+    ];
+}
+```
+
+**Step 2: (Optional) Add field definitions in `app/Models/FieldPermission.php`:**
+```php
+'NewFeature' => [
+    'title' => 'Title',
+    'status' => 'Status',
+],
+```
+
+**Step 3: Use in controllers:**
+```php
+if (!auth()->user()->canRead('NewFeature')) {
+    abort(403);
+}
+```
+
+**Step 4: Use in views:**
+```blade
+@if(auth()->user()->canWriteField('NewFeature', 'title'))
+    <input name="title" ...>
+@else
+    <input name="title" disabled readonly>
+@endif
+```
+
+### Permission Methods
+
+| Method | Description |
+|--------|-------------|
+| `canDo($doctype, $action)` | Check read/write/create/delete/export |
+| `canRead($doctype)` | Shortcut for read permission |
+| `canWrite($doctype)` | Shortcut for write permission |
+| `canWriteField($doctype, $field)` | Check field write permission |
+| `canReadField($doctype, $field)` | Check field read permission |
 
 ## 🤖 AI-Assisted Development
 
