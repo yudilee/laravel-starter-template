@@ -28,7 +28,16 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     
-    Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+    // Dashboard with stats
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Global Search
+    Route::get('search', [\App\Http\Controllers\SearchController::class, 'search'])->name('search');
+    Route::get('search/results', [\App\Http\Controllers\SearchController::class, 'results'])->name('search.results');
+    
+    // User Preferences
+    Route::post('preferences/columns', [\App\Http\Controllers\PreferenceController::class, 'saveColumns'])->name('preferences.columns');
+    Route::post('preferences/sort', [\App\Http\Controllers\PreferenceController::class, 'saveSort'])->name('preferences.sort');
 
     // Notifications
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -110,6 +119,13 @@ Route::middleware('auth')->group(function () {
         Route::post('audit-logs/archive', [\App\Http\Controllers\Admin\AuditLogController::class, 'archive'])->name('audit-logs.archive');
         Route::post('audit-logs/settings', [\App\Http\Controllers\Admin\AuditLogController::class, 'updateSettings'])->name('audit-logs.settings');
         Route::get('audit-logs/export', [\App\Http\Controllers\Admin\AuditLogController::class, 'exportArchives'])->name('audit-logs.export');
+
+        // Dropdown Options (configurable dropdowns)
+        Route::get('dropdowns', [\App\Http\Controllers\DropdownController::class, 'index'])->name('dropdowns.index');
+        Route::post('dropdowns', [\App\Http\Controllers\DropdownController::class, 'store'])->name('dropdowns.store');
+        Route::put('dropdowns/{option}', [\App\Http\Controllers\DropdownController::class, 'update'])->name('dropdowns.update');
+        Route::delete('dropdowns/{option}', [\App\Http\Controllers\DropdownController::class, 'destroy'])->name('dropdowns.destroy');
+        Route::post('dropdowns/reorder', [\App\Http\Controllers\DropdownController::class, 'reorder'])->name('dropdowns.reorder');
 
         // Data Cleanup
         Route::get('cleanup', [\App\Http\Controllers\Admin\DataCleanupController::class, 'index'])->name('cleanup.index');
